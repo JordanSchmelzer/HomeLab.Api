@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace HomeLab.Api.Controllers {
+namespace HomeLab.Api.Controllers
+{
   [Route("api/[controller]")]
   [ApiController]
   public class AssetsController : ControllerBase {
@@ -24,7 +25,7 @@ namespace HomeLab.Api.Controllers {
 
     //GET api/assets/
     [HttpPost]
-    public async Task<IActionResult> CreateAsset([FromBody] LabAsset asset) {
+    public async Task<IActionResult> CreateAsset([FromBody] LabAssetDTO asset) {
       if (!ModelState.IsValid) {
         return BadRequest(ModelState);
       }
@@ -46,7 +47,7 @@ namespace HomeLab.Api.Controllers {
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateAsset(int id, [FromBody] LabAsset asset) {
+    public async Task<IActionResult> UpdateAsset(int id, [FromBody] LabAssetDTO asset) {
       if (id != asset.Id) {
         return BadRequest("Asset Id mismatch.");
       }

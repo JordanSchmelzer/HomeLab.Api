@@ -9,7 +9,7 @@ namespace HomeLab.Api.Data
     public class MyDbContext : DbContext {
 
     public DbSet<LabAssetDTO> Asset { get; set; }
-    public DbSet<GameEventDTO> game_Events { get; set; }
+    public DbSet<GameEventDTO> GameEvents { get; set; }
     public DbSet<Game> Game { get; set; }
 
     public MyDbContext(DbContextOptions options) : base(options) {

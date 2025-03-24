@@ -13,56 +13,50 @@ namespace HomeLab.Api.Controllers
   public class GameController : ControllerBase {
     private readonly MyDbContext _dbContext;
 
-    public GameController(MyDbContext dbContext) {
+    public GameController(MyDbContext dbContext)
+    {
       _dbContext = dbContext;
     }
 
-    //GET api/assets
-    [HttpGet]
-    public async Task<IActionResult> Get() {
-      var assets = await _dbContext.game_Events.ToListAsync();
-      return Ok(assets);
-    }
 
-
-    [HttpPost("create")]
-    public async Task<IActionResult> PostEvent([FromBody] GameEventDTO events) {
-      var game_events = new object();
-      try {
-        _dbContext.game_Events.Add(events);
-        await _dbContext.SaveChangesAsync();
+    [HttpPost("CreateNew")]
+    public async Task<IActionResult> ExecuteNewGame([FromBody] Game newGame) 
+    {
+      if (newGame.Player == null) 
+      {
+        return this.BadRequest("Cannot have null parameters.");
       }
-      catch (Exception ex) {
-        Console.WriteLine(ex);
-        //await return StatusCode(500);
-      }
-      Console.WriteLine("ok");
-      return CreatedAtAction(nameof(Get), new { id = events.Id }, events);
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> CreateGame([FromBody] Game createGame) {
-      try {
-        _dbContext.Game.Add(createGame);
-        await _dbContext.SaveChangesAsync();
-      }
-      catch {
-
-      }
-      //var asset = await _dbContext.Asset.FindAsync(id);
-      return CreatedAtAction(nameof(GetGameById), new {id = createGame.Id}, createGame);
+      _dbContext.Game.Add(newGame);
+      await _dbContext.SaveChangesAsync();
+      return CreatedAtAction(nameof(GetGameById), new { id = newGame.Id }, newGame);
     }
 
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetGameById(int id) {
+    public async Task<IActionResult> GetGameById(int id) 
+    {
       var game = await _dbContext.Game.FindAsync(id);
-      if (game == null) {
+      if (game == null) 
+      {
         return NotFound();
       }
       return Ok(game);
     }
 
+
+    [HttpPost("NewEvent")]
+    public async Task<IActionResult> NewEvent([FromBody] GameEventDTO myEvent) {
+      _dbContext.GameEvents.Add(myEvent);
+      await _dbContext.SaveChangesAsync();
+      return CreatedAtAction(nameof(NewEvent), new { id = myEvent.Id }, myEvent);
+    }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> ExecuteUpdateGame([FromBody] Game game) {
+      _dbContext.Game.Update(game);
+      await _dbContext.SaveChangesAsync();
+      return Ok(game);
+    } 
   }
 }
